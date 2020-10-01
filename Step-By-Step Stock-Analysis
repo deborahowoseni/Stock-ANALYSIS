@@ -1,0 +1,69 @@
+from google.colab import drive
+drive.mount('/content/drive')
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from copy import copy
+import plotly.express as px
+import plotly.figure_factory as ff
+import plotly.graph_objects as go
+
+stock_df = pd.read_csv("/content/drive/My Drive/stock/stock (1).csv")
+
+stock_df
+
+stock_df.columns[:1]
+
+stock_df.describe()
+
+# print the list of the stock
+for i in stock_df.columns[1:]:
+ print(i)
+
+# to sort out the df by date
+stock_df.sort_values(by=["Date"])
+
+# to calculate the average value  of all the stock
+stock_df.mean()
+
+# to calculate the standard deviation of all the stock
+stock_df.std()
+
+# to check for any missing values
+stock_df.isnull().sum()
+
+stock_df.info()
+
+# to define a function to plot all the stock values
+def plot_graph(df, fig_title):
+   df.plot(x="Date",figsize=(15,7), linewidth=3,title=fig_title)
+   plt.grid()
+   plt.show()
+plot_graph(stock_df, " RAW STOCK PRICES (WITHOUT NORMALIZATION)")
+
+# to plot graph of the stock with normalized prices
+def price_normalized(df):
+# make a copy of the dataframe
+    x = stock_df.copy()
+    for i in x.columns[1:]:
+       x[i] = x[i]/x[i][0]
+    return x 
+
+price_normalized(stock_df)
+
+plot_graph(price_normalized(stock_df), " NORMALIED STOCK PRICES ")
+
+# create a function to perform interactive data plotting using plotly express
+def interactive_graph(df, title):
+    fig = px.line(title = title)
+
+    for i in df.columns[1:]:
+      fig.add_scatter(x= df["Date"], y= df[i], name=i)
+
+    fig.show()
+
+
+interactive_graph(stock_df,'Prices')
+
